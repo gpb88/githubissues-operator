@@ -22,7 +22,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"time"
 
@@ -52,11 +51,10 @@ type GithubIssueReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.0/pkg/reconcile
 func (r *GithubIssueReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = logf.FromContext(ctx)
-
 	logger := r.Log.WithValues("githubssue", req.NamespacedName)
 
 	logger.Info("First run")
+	logger.Info("End reconcile")
 	return ctrl.Result{RequeueAfter: 60 * time.Second}, nil
 }
 
