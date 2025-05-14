@@ -18,21 +18,23 @@ package controller
 
 import (
 	"context"
-	"fmt"
+
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	"time"
+
+	"github.com/go-logr/logr"
 	trainingv1alpha1 "github.com/gpb88/githubissues-operator/api/v1alpha1"
-
-	"github.com/google/go-github/v72/github"
+	//"github.com/google/go-github/v72/github"
 )
 
 // GithubIssueReconciler reconciles a GithubIssue object
 type GithubIssueReconciler struct {
 	client.Client
+	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
@@ -52,30 +54,10 @@ type GithubIssueReconciler struct {
 func (r *GithubIssueReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = logf.FromContext(ctx)
 
-	// TODO(user): your logic here
-	opts := zap.Options{}
-	//opts.BindFlags(flag.CommandLine)
-	//flag.Parse()
-	mylog := ctrl.Log.WithName("mylog")
+	logger := r.Log.WithValues("githubssue", req.NamespacedName)
 
-	logger := zap.New(zap.UseFlagOptions(&opts))
-	logf.SetLogger(logger)
-
-	scopedLog := logf.Log.WithName("scoped")
-	mylog.Info("XDDDDDDDDDDDDD")
-	scopedLog.Info("Printing at INFO level")
-	client := github.NewClient(nil)
-
-	// list all organizations for user "willnorris"
-	orgs, _, err := client.Organizations.List(context.Background(), "gpb88", nil)
-	if err != nil {
-		for _, org := range orgs {
-
-			scopedLog.Info(fmt.Sprintf("%+v\n", org))
-		}
-	}
-
-	return ctrl.Result{}, nil
+	logger.Info("First run")
+	return ctrl.Result{RequeueAfter: 60 * time.Second}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
